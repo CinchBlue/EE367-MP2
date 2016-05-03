@@ -17,6 +17,18 @@ struct EncodingBuffer {
     struct EncodingTable* table;
 };
 
+
+int main_isConsoleInputGood(int argc, char* argv[]) {
+    return argc == 4;
+}
+
+void main_printConsoleUsageEncode() {
+    printf("./encode367 <codebook file> <data file> <compressed data file>\n");
+
+}
+
+
+
 void reverseString(char* buffer, int size) {
     int i = 0;
     for(i = 0; i <= (size-1)/2; ++i) {
