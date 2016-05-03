@@ -160,7 +160,9 @@ void HuffmanTreeNode_free_subtree(struct HuffmanTreeNode* head) {
 
 void HuffmanTree_parse_codebook(
     struct HuffmanTreeNode** it,
-    FILE* file
+    FILE* file,
+    long* file_it,
+    const long filesize
 ) {
 
     /* Determine if 0 or 1.
@@ -169,20 +171,25 @@ void HuffmanTree_parse_codebook(
      * If 0, read the next 8 characters, translate to int, then create a new
        leaf node, and return.
      */
+    printf("CURRENT ITERATOR: %ld\n", *file_it);
+     
     char c = fgetc(file);
+    (*file_it)++;
+    printf("CURRENT ITERATOR: %ld\n", *file_it);
     struct HuffmanTreeNode* temp;
-    if (c != EOF) {
+    if (c != EOF && *file_it <= filesize) {
         if (c == '1') {
             *it = HuffmanTreeNode_ctor_internal();
-            HuffmanTree_parse_codebook(&(*it)->left, file);
-            HuffmanTree_parse_codebook(&(*it)->right, file);
+            HuffmanTree_parse_codebook(&(*it)->left, file, file_it, filesize);
+            HuffmanTree_parse_codebook(&(*it)->right, file, file_it, filesize);
             return;
         } else if (c == '0') {
             char buffer[9];
             int i = 0;
             for (; i < 8; ++i) {
                 char c2 = fgetc(file);
-                if (c2 == EOF) {
+                (*file_it)++;
+                if (c2 == EOF || *file_it > filesize) {
                     break;
                 } else { 
                     buffer[i] = c2;
@@ -192,6 +199,8 @@ void HuffmanTree_parse_codebook(
             *it = HuffmanTreeNode_ctor_leaf(char_value, 0.0f);
             return;
         } 
+    } else {
+        printf("Reached max file size. Stopping parse of codebook.\n");
     }
 }
 
@@ -201,18 +210,22 @@ struct HuffmanTree* HuffmanTree_ctor_codebook(char* filename) {
         fprintf(stdout, "HuffmanTree_ctor_codebook: could not open file.\n");
     }
 
-    char c = -1;
     int i = 0;
+    char buffer[15]; 
     for(; i < 14; ++i) {
-        c = fgetc(file);
-    }
+        buffer[i] = fgetc(file);
+    } buffer[14] = '\0';
+    
+    long filesize = binStringToInt(buffer, 15) - 14;
+    printf("CODEBOOK FILESIZE: %ld\n", filesize);
 
     /* Determine if 0 or 1.
      * If 1, create a new internal node.
      * If 0, read the next 8 characters, translate to int, then create a new
        leaf node.
      */
-    c = fgetc(file);
+    char c = fgetc(file);
+    long file_it = 1;
     struct HuffmanTreeNode* temp;
     if (c != EOF) { 
         if (c == '1') {
@@ -222,6 +235,7 @@ struct HuffmanTree* HuffmanTree_ctor_codebook(char* filename) {
             int i = 0;
             for (; i < 8; ++i) {
                 char c2 = fgetc(file);
+                file_it++;
                 if (c2 == EOF) {
                     break;
                 } else { 
@@ -232,13 +246,14 @@ struct HuffmanTree* HuffmanTree_ctor_codebook(char* filename) {
             temp = HuffmanTreeNode_ctor_leaf(char_value, 0.0f);
         }
     }
+    printf("CURRENT ITERATOR: %ld\n", file_it);
 
     /* If we are an internal node, we have already inserted the root.
      * Now, parse left and right and insert into their subtrees.
      * Go into the recursive algorithm. */
     if (temp->code != 0) {
-       HuffmanTree_parse_codebook(&temp->left, file);
-       HuffmanTree_parse_codebook(&temp->right, file);
+       HuffmanTree_parse_codebook(&temp->left, file, &file_it, filesize);
+       HuffmanTree_parse_codebook(&temp->right, file, &file_it, filesize);
     } 
 
     return HuffmanTree_ctor(temp);

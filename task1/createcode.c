@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
 
         fprintf(
             stdout,
-            "file_temp_size(binary): %s",
+            "file_out_size(binary): %s",
             file_size_buffer);
         
 
