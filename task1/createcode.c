@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
 
         
         /* TEST: Print the encoding */
-        FILE* file_temp = fopen("temp.createcode", "w");
+        FILE* file_temp = fopen(".temp.createcode", "w");
         if (file_temp == NULL) {
             fprintf(stdout, "ERROR: Could not open temp output file.\n");
         }
@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
 
  
         /* reopen the temp file, but for reading. */
-        file_temp = fopen("temp.createcode", "r");
+        file_temp = fopen(".temp.createcode", "r");
         if (file_temp == NULL) {
             fprintf(stdout, "ERROR: Could not open temp output file.\n");
         }

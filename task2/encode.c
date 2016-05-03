@@ -7,6 +7,7 @@
 #include "encode_impl.h"
 #include "util.h"
 
+
 int main(int argc, char* argv[]) {
 
     if (main_isConsoleInputGood(argc, argv)) {
@@ -24,14 +25,11 @@ int main(int argc, char* argv[]) {
         /* Create the encoding buffer. */
         struct EncodingBuffer e_buffer;
         /* Clear the buffer and null-terminate it. */
-        memset(&e_buffer, -1, sizeof(char)*ENCODING_BUFFER_SIZE);
-        e_buffer.buffer[ENCODING_BUFFER_SIZE-1] = '\0'; 
-        e_buffer.iterator = ENCODING_BUFFER_SIZE-2;
-        printf("buffer iterator: %d\n", e_buffer.iterator);
-        /* Attach the EncodingTable into the buffer. */
-        e_buffer.table = &e_table;
+        EncodingBuffer_ctor(&e_buffer, &e_table);
 
-        HuffmanTree_traverse_clr(tree, printTreeEncodingForChar, (void*)&e_buffer);
+        
+
+        traverseTreeAndEncode(tree->head, &e_buffer);
         /* Now the table has each of the characters and the table. */
 
         /* Now, open the input file and the output file */

@@ -12,10 +12,21 @@ struct EncodingTable {
 
 struct EncodingBuffer {
     int iterator;
-    int left_or_right; /* 0 for left, 1 for right */
     char buffer[ENCODING_BUFFER_SIZE];
     struct EncodingTable* table;
 };
+
+
+void EncodingBuffer_ctor(struct EncodingBuffer* pthis,
+                         struct EncodingTable* ptable) {
+    pthis->table = ptable;
+    pthis->iterator = ENCODING_BUFFER_SIZE-2;
+    pthis->buffer[ENCODING_BUFFER_SIZE-1] = '\0';
+}
+
+void printEncodingBuffer(struct EncodingBuffer* pthis) {
+    printf("ENCODING: %s\n", &pthis->buffer[pthis->iterator]);
+}
 
 
 int main_isConsoleInputGood(int argc, char* argv[]) {
@@ -39,49 +50,39 @@ void reverseString(char* buffer, int size) {
 
 }
 
-void printTreeEncodingForChar(struct HuffmanTreeNode* node,
-                              void* info) {
+void traverseTreeAndEncode(struct HuffmanTreeNode* node,
+                           struct EncodingBuffer*  buffer) {
 
-    /* Here, we will have a buffer to store the encoding, of length
-     * char[257].
-     *
-     * We can assume that the very final 
-     */
-    struct EncodingBuffer* buffer = (struct EncodingBuffer*) info;
-    /* If the current node is 1,
-     *      - push a 1 onto the encoding buffer.
-     * If the current node is 0,
-     *      - push a 0 onto the encoding buffer,
-     *      - copy the encoding buffer onto the leaf node's character buffer in
-     *        the EncodingTable,
-     *      - copy the node's name onto the name in the EncodingTable,
-     *      - pop a 0 from the encoding buffer.
-     */ 
-    if (node->code == 1) {
-        buffer->buffer[buffer->iterator] = '1';
+
+    if (node->left != NULL) {
+        buffer->buffer[buffer->iterator] = '0';
+        printEncodingBuffer(buffer);
         buffer->iterator--;
-    } else if (node->code == 0) {
-        /* Set the next character of the code to be '0' or '1' depending on
-         * if it's a left or right node.
-         */
-        buffer->buffer[buffer->iterator] = (buffer->left_or_right? ('0') : ('1'));
-        /* iterate left/right */
-        buffer->left_or_right = !buffer->left_or_right;
+        traverseTreeAndEncode(node->left, buffer);
         
-        strcpy(buffer->table->encoding[node->name], &buffer->buffer[buffer->iterator]);
-        reverseString(
-            buffer->table->encoding[node->name],
-            ENCODING_BUFFER_SIZE-1-buffer->iterator);
-        buffer->table->name[node->name] = node->name;
-        printf("Encoding: %3d : %s\n",
-               buffer->table->name[node->name],
-               buffer->table->encoding[node->name]);
-        if (buffer->left_or_right == 1) {
-            buffer->iterator++;
-        }
     }
-        
+    
+    if (node->right != NULL) {
+        buffer->buffer[buffer->iterator] = '1';
+        printEncodingBuffer(buffer);
+        buffer->iterator--;
+        traverseTreeAndEncode(node->right, buffer);
+    }
+
+
+    buffer->iterator++;
+    printf("buffer iterator: %d\n", buffer->iterator);
+
+    strcpy(buffer->table->encoding[node->name], &buffer->buffer[buffer->iterator]);
+    reverseString(
+        buffer->table->encoding[node->name],
+        ENCODING_BUFFER_SIZE-1-buffer->iterator);
+    buffer->table->name[node->name] = node->name;
+    printf("Encoding: %3d : %s\n",
+            buffer->table->name[node->name],
+            buffer->table->encoding[node->name]);
 }
+
 
 #endif /* ENCODE_IMPL_H */
 
