@@ -1,6 +1,8 @@
 #include "HuffmanTree.h"
 #include "HuffmanTable.h"
 
+/* Naive linked list implementation. */
+
 /** Easy ctor for HuffmanTreeNode */
 struct HuffmanTreeNode* HuffmanTreeNode_ctor(int code, char name, float prob) {
 
@@ -22,9 +24,13 @@ struct HuffmanTreeNode* HuffmanTreeNode_ctor_internal() {
     return HuffmanTreeNode_ctor(1, -1, 0.0);
 }
 
+void HuffmanTreeNode_dtor(struct HuffmanTreeNode* pthis) {
+    free(pthis);
+}
+
 void HuffmanTreeNode_print(struct HuffmanTreeNode* pthis, void* null) {
 
-    fprintf(stdout, "Node: {%2d, %3d, %f}",
+    fprintf(stdout, "Node: {%3hhu, %3hhu, %f}",
         pthis->code,
         pthis->name,
         pthis->prob);
@@ -175,9 +181,8 @@ void HuffmanTree_parse_codebook(
      
     char c = fgetc(file);
     (*file_it)++;
-    printf("CURRENT ITERATOR: %ld\n", *file_it);
     struct HuffmanTreeNode* temp;
-    if (c != EOF && *file_it <= filesize) {
+    if (c != EOF) {
         if (c == '1') {
             *it = HuffmanTreeNode_ctor_internal();
             HuffmanTree_parse_codebook(&(*it)->left, file, file_it, filesize);
@@ -189,13 +194,13 @@ void HuffmanTree_parse_codebook(
             for (; i < 8; ++i) {
                 char c2 = fgetc(file);
                 (*file_it)++;
-                if (c2 == EOF || *file_it > filesize) {
+                if (c2 == EOF) {
                     break;
                 } else { 
                     buffer[i] = c2;
                 }
             }
-            int char_value = binStringToInt(buffer, 9);
+            unsigned int char_value = binStringToInt(buffer, 9);
             *it = HuffmanTreeNode_ctor_leaf(char_value, 0.0f);
             return;
         } 
@@ -216,7 +221,7 @@ struct HuffmanTree* HuffmanTree_ctor_codebook(char* filename) {
         buffer[i] = fgetc(file);
     } buffer[14] = '\0';
     
-    long filesize = binStringToInt(buffer, 15) - 14;
+    long filesize = binStringToInt(buffer, 15);
     printf("CODEBOOK FILESIZE: %ld\n", filesize);
 
     /* Determine if 0 or 1.
@@ -225,7 +230,7 @@ struct HuffmanTree* HuffmanTree_ctor_codebook(char* filename) {
        leaf node.
      */
     char c = fgetc(file);
-    long file_it = 1;
+    long file_it = 14;
     struct HuffmanTreeNode* temp;
     if (c != EOF) { 
         if (c == '1') {
@@ -239,10 +244,10 @@ struct HuffmanTree* HuffmanTree_ctor_codebook(char* filename) {
                 if (c2 == EOF) {
                     break;
                 } else { 
-                    buffer[0] = c2;
+                    buffer[i] = c2;
                 }
             }
-            int char_value = binStringToInt(buffer, 9);
+            unsigned int char_value = binStringToInt(buffer, 9);
             temp = HuffmanTreeNode_ctor_leaf(char_value, 0.0f);
         }
     }
@@ -255,6 +260,7 @@ struct HuffmanTree* HuffmanTree_ctor_codebook(char* filename) {
        HuffmanTree_parse_codebook(&temp->left, file, &file_it, filesize);
        HuffmanTree_parse_codebook(&temp->right, file, &file_it, filesize);
     } 
+    fclose(file);
 
     return HuffmanTree_ctor(temp);
 }

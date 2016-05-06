@@ -13,3 +13,4 @@ cat .temp.codebook .temp.encoded > $OUTPUTNAME
 rm .temp.table
 rm .temp.codebook
 rm .temp.encoded
+rm .temp.createcode

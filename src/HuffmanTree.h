@@ -4,6 +4,10 @@
 #include "HuffmanTable.h"
 
 /** The node type used in the HuffmanTree. Simple. */
+/** I'm using an opaque pointer because I have two implementations.
+ *  I switched to the array one because I think I got segfaults from
+ *  stack overflow.
+ */
 struct HuffmanTreeNode {
     char                code;
     char                name;
@@ -15,6 +19,8 @@ struct HuffmanTreeNode {
 struct HuffmanTreeNode* HuffmanTreeNode_ctor(int code, char name, float prob);
 struct HuffmanTreeNode* HuffmanTreeNode_ctor_leaf(char name, float prob);
 struct HuffmanTreeNode* HuffmanTreeNode_ctor_internal();
+
+void HuffmanTreeNode_dtor(struct HuffmanTreeNode* pthis);
 
 void HuffmanTreeNode_print(struct HuffmanTreeNode* pthis, void* null);
 
@@ -28,6 +34,8 @@ void HuffmanTreeNode_traverse_clr(struct HuffmanTreeNode* pthis,
                                   void (*f) (struct HuffmanTreeNode*, void*),
                                   void* info); 
 
+struct HuffmanTreeNode* HuffmanTreeNode_left(struct HuffmanTreeNode* pthis);
+struct HuffmanTreeNode* HuffmanTreeNode_right(struct HuffmanTreeNode* pthis);
 
 /*****************************************************************/
 /*****************************************************************/

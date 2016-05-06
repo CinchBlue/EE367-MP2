@@ -12,7 +12,7 @@ char* intToBinString(long i, char* buffer, int size) {
         buffer[j] = c;
     }
 
-    for (j = 0; j < (size-1)/2; ++j) {
+    for (j = 0; j <= (size-1)/2; ++j) {
         char temp = buffer[j];
         buffer[j] = buffer[size-2-j];
         buffer[size-2-j] = temp;
@@ -27,7 +27,7 @@ long binStringToInt(char* buffer, int size) {
     int sum = 0;
 
     int j = 0;
-    for (j = 0; j < (size-1)/2; ++j) {
+    for (j = 0; j <= (size-1)/2; ++j) {
         char temp = buffer[j];
         buffer[j] = buffer[size-2-j];
         buffer[size-2-j] = temp;
@@ -35,7 +35,7 @@ long binStringToInt(char* buffer, int size) {
 
     buffer[size-1] = '\0';
     int factor = 1;
-    for(j = 0; j < size && buffer[j] != '\0'; ++j) {
+    for(j = 0; j < size-1 && buffer[j] != '\0'; ++j) {
         sum += factor * (buffer[j]-'0');
         factor *= 2;
     }

@@ -1,0 +1,19 @@
+#!/bin/bash
+# Compression script for MP2
+
+echo "input = $1"
+
+INPUTFILENAME=$1
+STRLENGTH=`expr length $1`
+INT_FOUR="4"
+
+OUTPUTFILENAME=${INPUTFILENAME:0:`expr $STRLENGTH - $INT_FOUR`}
+
+echo "input  = $INPUTFILENAME"
+echo "output = $OUTPUTFILENAME"
+
+./decodesplit367 $INPUTFILENAME .temp.codebook .temp.encoded
+./decode367 .temp.codebook .temp.encoded $OUTPUTFILENAME
+rm .temp.codebook
+rm .temp.encoded
+

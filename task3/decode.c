@@ -29,6 +29,8 @@ int main(int argc, char* argv[]) {
         
         traverseTreeAndEncode(tree->head, &e_buffer);
 
+    
+        HuffmanTree_traverse_clr(tree, HuffmanTreeNode_print, NULL);
 
         FILE* filein = fopen(filename_input, "r");
         if (filein == NULL) {
@@ -39,7 +41,8 @@ int main(int argc, char* argv[]) {
         if (fileout == NULL) {
             printf("ERROR: Could not open data file.\n");
         }
-       
+        
+
         decodeFileUsingTree(tree, &e_table, filein, fileout);
         return 0;
     } else {
