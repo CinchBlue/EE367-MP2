@@ -1,0 +1,45 @@
+#!/bin/bash
+
+clear
+
+echo "    BEGIN BUILD"
+
+echo "    making frequency..."
+cd frequency
+make
+cd ..
+echo "    making task1..."
+cd task1
+make
+cd ..
+echo "    making task2..."
+cd task2
+make
+cd ..
+echo "    making task3..."
+cd task3
+make
+cd ..
+echo "    making task4..."
+cd task4
+make
+cd ..
+echo "    making task5..."
+cd task5
+make
+cd ..
+echo "    copying programs to task4 and task5..."
+cp frequency/frequency367 task4
+cp frequency/frequency367 task5
+cp task1/createcode367 task4
+cp task1/createcode367 task5
+cp task2/encode367 task4
+cp task2/encode367 task5
+cp task3/decode367 task4
+cp task3/decode367 task5
+cp task4/decodesplit367 task5
+cp task4/decodesplit367 task5 
+cp task4/compress367 task5
+cp task4/decompress367 task5
+
+echo "    END BUILD"
