@@ -1,3 +1,2 @@
-all: decodesplit.c
-	gcc -I../src decodesplit.c -o decodesplit367
+all: size.c
 	gcc size.c -o size
