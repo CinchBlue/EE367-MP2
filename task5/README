@@ -1,0 +1,14 @@
+Author: Austin Tasato
+
+So I made a small program called "size" in order to print out how many bytes are
+in a text-based file. There's also an optional flag for argument 2 for outputing
+the size of the file divided by 8, which is useful for the encoded files.
+
+# The size for each file are the following (uncoded, encoded, encoded/uncoded%):
+
+ - FrenchLanguage.html              (24713, 15733, 63.66%)
+ - SomeSpanishStoryIDontKnow.html   (73201, 47867, 65.39%)
+ - TheLottery.html                  (24887, 15214, 61.13%)
+ 
+
+

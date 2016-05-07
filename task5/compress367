@@ -1,0 +1,16 @@
+#!/bin/bash
+# Compression script for MP2
+
+echo "input  = $1"
+echo "output = $2"
+
+OUTPUTNAME="$1.367"
+
+./frequency367 $1 .temp.table
+./createcode367 .temp.table .temp.codebook
+./encode367 .temp.codebook $1 .temp.encoded 
+cat .temp.codebook .temp.encoded > $OUTPUTNAME 
+rm .temp.table
+rm .temp.codebook
+rm .temp.encoded
+rm .temp.createcode
